@@ -1,0 +1,76 @@
+[project]
+name = "counsy"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.141.1",
+    "uvicorn[standard]>=0.52.3",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.16.3",
+]
+
+[tool.ruff]
+
+exclude = [
+    "migrations",
+    ".git",
+    ".ruff_cache",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "__pycache__",
+    "venv",
+    "env",
+]
+
+line-length = 120
+
+target-version = "py312"
+
+[tool.ruff.lint.pylint]
+max-args = 6 # Максимальное кол-во аргументов функции
+max-branches = 10 # Максимальное кол-во ветвей if/else
+max-statements = 50 # Максимальное кол-во операторов в функции
+
+[tool.ruff.lint]
+preview = true
+select = [
+    "A",
+    "B",
+    "C4",
+    "E",
+    "F",
+    "I",
+    "W",
+    "UP",
+    "PL",
+    "RET"
+]
+fixable = [
+    "E",
+    "F401",
+    "I",
+    "W"
+]
+unfixable = [
+    "A",
+    "B",
+    "C4", "PL",
+    "RET",
+    "UP"
+]
+ignore = [
+    "RET501",
+    "RET504",
+    "B904",
+    "UP031",
+    "PLR6301",
+    "PLC0415",
+    "B008",
+]
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"

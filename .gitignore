@@ -1,0 +1,11 @@
+/.env
+/.idea/
+/.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Инструменты
+.ruff_cache/
+.pytest_cache/
