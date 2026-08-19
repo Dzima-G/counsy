@@ -1,8 +1,9 @@
 from enum import StrEnum
 from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-DOTENV_PATH = Path(__file__).resolve().parents[2] / ".env"
+DOTENV_PATH = Path(__file__).resolve().parent / ".env"
 
 
 class Environment(StrEnum):
