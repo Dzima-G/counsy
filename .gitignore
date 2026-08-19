@@ -1,11 +1,20 @@
-/.env
-/.idea/
-/.venv/
-
-# Python
+# Байт-код и кэш
 __pycache__/
 *.py[cod]
+*$py.class
 
-# Инструменты
+# Виртуальные окружения
+venv/
+.venv/
+
+# Переменные окружения
+.env
+env/
+.env/
+
+# ruff
 .ruff_cache/
-.pytest_cache/
+
+# IDE
+.idea/
+.vscode/
