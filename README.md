@@ -1,6 +1,6 @@
 # Советник
 
-![CI](https://github.com/Dzima-G/counsy/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/Dzima-G/counsy/actions/workflows/ci.yaml/badge.svg)
 
 AI-помощник, который понимает документы компании (договоры, регламенты, инструкции) и с указанием точного источника
 отвечает сотруднику на вопросы по ним.
