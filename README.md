@@ -85,3 +85,8 @@ docker compose exec web uv run alembic upgrade head
 4. Откройте в браузере:
 
    Swagger UI доступен по адресу: http://127.0.0.1:8010/docs
+
+### Тесты:
+```shell
+docker compose run --rm test
+```

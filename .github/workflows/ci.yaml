@@ -5,21 +5,25 @@ on:
   pull_request:
 
 jobs:
-  lint:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: install uv
-        uses: astral-sh/setup-uv@v6
-        with:
-          python-version: "3.12"
+      - name: Prepare .env
+        run: cp app/core/.env.example app/core/.env
 
-      - name: Install dependencies
-        run: uv sync
+      - name: Build dev image
+        run: docker compose build test
 
       - name: Ruff check
-        run: uv run ruff check
+        run: docker compose run --rm --no-deps test uv run ruff check
 
       - name: Ruff format check
-        run: uv run ruff format --check
+        run: docker compose run --rm --no-deps test uv run ruff format --check
+
+      - name: Tests
+        run: docker compose run --rm test
+
+      - name: Build prod image
+        run: docker build --target prod -f app/Dockerfile -t counsy:prod .

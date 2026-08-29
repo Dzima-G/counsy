@@ -1,21 +1,25 @@
 # pull official base image
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS base
 
 # set working directory
-WORKDIR /usr/src/
+WORKDIR /usr/src
 
-ENV UV_NO_DEV=1
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
 COPY pyproject.toml uv.lock ./
 
-# install system dependencies
-RUN uv sync --locked --no-install-project
+FROM base AS dev
 
-COPY app app
-COPY alembic.ini ./
+RUN uv sync --locked
+CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+
+FROM base AS prod
+
+ENV UV_NO_DEV=1
 
 RUN uv sync --locked --no-dev
-
+COPY app app
+COPY alembic.ini ./
 CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips=*"]

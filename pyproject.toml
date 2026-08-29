@@ -15,7 +15,10 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "httpx>=0.28.1",
     "pre-commit>=4.6.2",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
     "ruff>=0.16.3",
 ]
 
@@ -41,6 +44,11 @@ target-version = "py312"
 max-args = 6 # Максимальное кол-во аргументов функции
 max-branches = 10 # Максимальное кол-во ветвей if/else
 max-statements = 50 # Максимальное кол-во операторов в функции
+
+[tool.ruff.lint.per-file-ignores]
+"**/__init__.py" = ["F401"]
+"**/env.py" = ["F401"]
+"**/test*.py" = ["PLR2004", "PLR0913", "PLR0915", "C901"]
 
 [tool.ruff.lint]
 preview = true
@@ -79,3 +87,14 @@ ignore = [
     "B008",
 ]
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--tb=short",
+]

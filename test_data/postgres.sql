@@ -1,0 +1,2 @@
+CREATE
+DATABASE con_test;

@@ -1,47 +1,63 @@
-services:
+x-app-common: &app-common
+  build:
+    context: .
+    dockerfile: app/Dockerfile
+    target: dev
+  volumes:
+    - ./app:/usr/src/app
+    - ./tests:/usr/src/tests
+    - ./pyproject.toml:/usr/src/pyproject.toml
+    - ./uv.lock:/usr/src/uv.lock
+    - ./alembic.ini:/usr/src/alembic.ini
+  depends_on:
+    db:
+      condition: service_healthy
 
-  web:
-    container_name: web_counsy
-    build:
-      context: .
-      dockerfile: app/Dockerfile
-    command: uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8010
-    env_file:
-      - ./app/core/.env
-    volumes:
-      - ./app:/usr/src/app
-      - ./tests:/usr/src/tests
-      - ./pyproject.toml:/usr/src/pyproject.toml
-      - ./uv.lock:/usr/src/uv.lock
-      - ./alembic.ini:/usr/src/alembic.ini
-    ports:
-      - 8010:8010
-    environment:
-      - PYTHONPATH=/usr/src
-      - DB__URL=${DB__URL:-postgresql+asyncpg://counsy:counsy@db:5432/con}
-      - DEBUG=${DEBUG:-True}
-    depends_on:
-      db:
-        condition: service_healthy
+
+services:
 
   db:
     image: postgres:18.3
     container_name: db_counsy
-    expose:
-      - 5432
     ports:
-      - 5432:5432
+      - 127.0.0.1:5432:5432
     environment:
       - POSTGRES_USER=${POSTGRES_USER:-counsy}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-counsy}
       - POSTGRES_DB=${POSTGRES_DB:-con}
     volumes:
       - pgdata:/var/lib/postgresql/18/docker
+      - ./test_data:/docker-entrypoint-initdb.d
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U counsy -d con" ]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  web:
+    container_name: web_counsy
+    <<: *app-common
+    command: uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8010
+    env_file:
+      - ./app/core/.env
+    ports:
+      - 127.0.0.1:8010:8010
+    environment:
+      - PYTHONPATH=/usr/src
+      - DB__URL=${DB__URL:-postgresql+asyncpg://counsy:counsy@db:5432/con}
+      - DEBUG=${DEBUG:-True}
+
+  test:
+    container_name: test_counsy
+    <<: *app-common
+    command: uv run pytest
+    env_file:
+      - ./app/core/.env
+    environment:
+      - PYTHONPATH=/usr/src
+      - TEST_DB_URL=${TEST_DB_URL:-postgresql+asyncpg://counsy:counsy@db:5432/con_test}
+    profiles:
+      - test
 
 volumes:
   pgdata:
