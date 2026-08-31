@@ -17,7 +17,7 @@ x-app-common: &app-common
 services:
 
   db:
-    image: postgres:18.3
+    image: pgvector/pgvector:0.8.6-pg18-trixie
     container_name: db_counsy
     ports:
       - 127.0.0.1:5432:5432

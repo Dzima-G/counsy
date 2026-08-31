@@ -2,9 +2,11 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID
 
+from pgvector.sqlalchemy import Vector
 from sqlalchemy import DateTime, ForeignKey, Integer, Text, Uuid, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.core.config import EMBEDDING_DIM
 from app.db.base import Base
 
 if TYPE_CHECKING:
@@ -30,4 +32,5 @@ class Chunk(Base):
         DateTime(timezone=True),
         server_default=func.now(),
     )
+    embedding: Mapped[list[float] | None] = mapped_column(Vector(EMBEDDING_DIM), nullable=True)
     document: Mapped["Document"] = relationship(back_populates="chunks")

@@ -6,6 +6,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 DOTENV_PATH = Path(__file__).resolve().parent / ".env"
 
+EMBEDDING_DIM: int = 1024
+"""The number of numbers in a vector (depends on the embedding model used)"""
+
 
 class DBSettings(BaseModel):
     url: str = Field(
