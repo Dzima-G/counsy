@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -24,3 +25,7 @@ class DocumentService:
     async def list_all(self) -> Sequence[Document]:
         """Return all documents."""
         return await self._repository.list_all()
+
+    async def get_by_id(self, document_id: UUID) -> Document | None:
+        """Return a document by id or None if not found."""
+        return await self._repository.get_by_id(document_id)

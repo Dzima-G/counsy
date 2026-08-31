@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -31,3 +32,11 @@ class DocumentRepository:
         result = await self._session.execute(select(Document))
 
         return result.scalars().all()
+
+    async def get_by_id(self, document_id: UUID) -> Document | None:
+        """Return a document by id or None if not found."""
+        result = await self._session.execute(
+            select(Document).where(Document.id == document_id),
+        )
+
+        return result.scalars().one_or_none()
