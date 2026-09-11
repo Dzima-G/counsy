@@ -9,6 +9,12 @@ DOTENV_PATH = Path(__file__).resolve().parent / ".env"
 EMBEDDING_DIM: int = 1024
 """The number of numbers in a vector (depends on the embedding model used)"""
 
+CHUNK_SIZE: int = 1000
+"""Maximum chunk size"""
+
+CHUNK_OVERLAP: int = 200
+"""Character overlap between adjacent segments"""
+
 
 class DBSettings(BaseModel):
     url: str = Field(
