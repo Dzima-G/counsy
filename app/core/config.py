@@ -45,11 +45,16 @@ class Environment(StrEnum):
     PRODUCTION = "production"
 
 
+class RedisSettings(BaseModel):
+    url: str = Field(default="redis://redis:6379/0", description="Url for connecting to Redis")
+
+
 class Settings(BaseSettings):
     app_name: str = "Counsy"
     debug: bool = False
     environment: Environment = Environment.DEVELOP
     db: DBSettings = DBSettings()
+    redis: RedisSettings = RedisSettings()
 
     model_config = SettingsConfigDict(
         env_file=DOTENV_PATH,

@@ -47,6 +47,36 @@ services:
       - DB__URL=${DB__URL:-postgresql+asyncpg://counsy:counsy@db:5432/con}
       - DEBUG=${DEBUG:-True}
 
+  redis:
+    volumes:
+      - redisdata:/data
+    image: redis:8.10.1-alpine
+    container_name: redis_counsy
+    expose:
+      - 6379
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  worker:
+    <<: *app-common
+    container_name: worker_celery
+    command: uv run celery -A app.workers.celery_app:celery_app worker --loglevel=info
+    env_file:
+      - ./app/core/.env
+    environment:
+      - PYTHONPATH=/usr/src
+      - DB__URL=${DB__URL:-postgresql+asyncpg://counsy:counsy@db:5432/con}
+      - REDIS__URL=${REDIS__URL:-redis://redis:6379/0}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   test:
     container_name: test_counsy
     <<: *app-common
@@ -61,4 +91,6 @@ services:
 
 volumes:
   pgdata:
+    driver: local
+  redisdata:
     driver: local
