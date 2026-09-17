@@ -21,6 +21,7 @@ async def test_create_document(client: AsyncClient) -> None:
     assert body["doc_type"] == payload["doc_type"], f"Expected {payload['doc_type']}, received {body['doc_type']}"
     assert body["id"] is not None, f"Expected id, received {body['id']}."
     assert body["created_at"] is not None, f"Expected created_at, received {body['created_at']}."
+    assert body["doc_status"] == "pending", f"Expected pending, received {body['doc_status']}."
 
 
 async def test_get_list_document(client: AsyncClient) -> None:

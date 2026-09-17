@@ -15,6 +15,15 @@ class DocumentType(StrEnum):
     OTHER = "other"
 
 
+class DocumentStatus(StrEnum):
+    """Document status."""
+
+    PENDING = "pending"
+    PROCESSING = "processing"
+    READY = "ready"
+    FAILED = "failed"
+
+
 class DocumentCreate(BaseModel):
     """Input data for creating a document."""
 
@@ -33,6 +42,8 @@ class DocumentRead(BaseModel):
 
     id: UUID
     """Document id."""
+    doc_status: DocumentStatus
+    """Document status."""
     title: str
     """Document name."""
     source: str

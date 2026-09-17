@@ -21,6 +21,7 @@ class Document(Base):
         primary_key=True,
         server_default=func.uuidv7(),
     )
+    doc_status: Mapped[str] = mapped_column(String(20), server_default="pending")
     title: Mapped[str] = mapped_column(String(255))
     source: Mapped[str] = mapped_column(String(512))
     content: Mapped[str] = mapped_column(Text)

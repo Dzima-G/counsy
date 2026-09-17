@@ -10,6 +10,7 @@ from app.db.base import Base
 from app.db.models import Document  # noqa: F401
 from app.db.session import get_db_session
 from app.main import app
+from app.workers.tasks import process_document
 
 TEST_DB_URL = os.environ["TEST_DB_URL"]
 
@@ -44,3 +45,9 @@ async def client() -> AsyncGenerator[AsyncClient, None]:
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         yield client
     app.dependency_overrides.clear()
+
+
+@pytest.fixture(autouse=True)
+def mock_process_document_delay(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Mock process_document.delay so the create endpoint doesn't hit Redis in tests."""
+    monkeypatch.setattr(process_document, "delay", lambda *args, **kwargs: None)

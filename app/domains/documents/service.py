@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.models import Document
 from app.domains.documents.repository import DocumentRepository
 from app.schemas.document import DocumentCreate
+from app.workers.tasks import process_document
 
 
 class DocumentService:
@@ -19,6 +20,8 @@ class DocumentService:
         """Create a document and commit the transaction."""
         document = await self._repository.create(data)
         await self._session.commit()
+
+        process_document.delay(str(document.id))
 
         return document
 

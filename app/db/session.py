@@ -1,4 +1,5 @@
 from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
 
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
@@ -33,3 +34,10 @@ async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
 async def dispose_engine() -> None:
     """Correct closing of connections during shutdown."""
     await engine.dispose()
+
+
+@asynccontextmanager
+async def session_scope() -> AsyncGenerator[AsyncSession, None]:
+    """Async DB for use outside FastAPI (Celery, scripts, CLI)"""
+    async with async_session_maker() as session:
+        yield session
