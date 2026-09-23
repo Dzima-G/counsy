@@ -3,8 +3,9 @@ from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
-from app.db.models import Document
+from app.db.models import Chunk, Document
 from app.schemas.document import DocumentCreate
 
 
@@ -40,3 +41,21 @@ class DocumentRepository:
         )
 
         return result.scalars().one_or_none()
+
+
+class ChunkRepository:
+    """Data access for chunk entities."""
+
+    def __init__(self, session: AsyncSession) -> None:
+        self._session = session
+
+    async def search_similar(self, query_vector: list[float], limit: int) -> Sequence[Chunk]:
+        """Return the chunks whose embeddings are nearest to the query vector."""
+        result = await self._session.execute(
+            select(Chunk)
+            .options(selectinload(Chunk.document))
+            .order_by(Chunk.embedding.cosine_distance(query_vector))
+            .limit(limit)
+        )
+
+        return result.scalars().all()

@@ -15,6 +15,9 @@ CHUNK_SIZE: int = 1000
 CHUNK_OVERLAP: int = 200
 """Character overlap between adjacent segments"""
 
+SEARCH_TOP_K: int = 5
+"""How many nearest chunks to retrieve for a query."""
+
 
 class DBSettings(BaseModel):
     url: str = Field(
