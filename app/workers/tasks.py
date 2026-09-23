@@ -3,6 +3,7 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.ai.embedder import embed_texts
 from app.db.models import Chunk, Document
 from app.db.session import session_scope
 from app.domains.documents.chunker import split_text
@@ -43,8 +44,11 @@ async def _build_chunks(session: AsyncSession, document: Document) -> None:
     await session.commit()
 
     pieces = split_text(document.content)
-    for index, piece in enumerate(pieces):
-        session.add(Chunk(document_id=document.id, content=piece, chunk_index=index))
+    inputs = [f"passage: {piece}" for piece in pieces]
+    vectors = await embed_texts(inputs)
+
+    for index, (piece, vector) in enumerate(zip(pieces, vectors, strict=True)):
+        session.add(Chunk(document_id=document.id, content=piece, chunk_index=index, embedding=vector))
 
     document.doc_status = DocumentStatus.READY
     await session.commit()

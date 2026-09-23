@@ -21,22 +21,22 @@ class DBSettings(BaseModel):
         default="postgresql+asyncpg://counsy:counsy@db:5432/con",
         description="DSN для соединения с PostgreSQL",
     )
-    pool_size: int = Field(default=10, description="Размер пула соединений")
+    pool_size: int = Field(default=10, description="Connection pool size")
     max_overflow: int = Field(
         default=20,
-        description="Максимальное количество дополнительных временных соединений с базой данных сверх лимита",
+        description="Maximum number of additional temporary database connections beyond the limit",
     )
     pool_timeout: int = Field(
         default=30,
-        description="Время ожидания соединения",
+        description="Connection timeout",
     )
     pool_recycle: int = Field(
         default=300,
-        description="Время в секундах, по истечении которого соединение с базой данных будет принудительно пересоздано",
+        description="The time in seconds after which the database connection will be forcibly recreated",
     )
     pool_pre_ping: bool = Field(
         default=True,
-        description="Проверка соединения перед каждым использованием",
+        description="Check the connection before each use",
     )
 
 
@@ -49,12 +49,17 @@ class RedisSettings(BaseModel):
     url: str = Field(default="redis://redis:6379/0", description="Url for connecting to Redis")
 
 
+class EmbeddingSettings(BaseModel):
+    url: str = Field(default="http://embedder:80", description="Url for connecting container embedder")
+
+
 class Settings(BaseSettings):
     app_name: str = "Counsy"
     debug: bool = False
     environment: Environment = Environment.DEVELOP
     db: DBSettings = DBSettings()
     redis: RedisSettings = RedisSettings()
+    embedder: EmbeddingSettings = EmbeddingSettings()
 
     model_config = SettingsConfigDict(
         env_file=DOTENV_PATH,

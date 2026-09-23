@@ -52,6 +52,8 @@ services:
       - redisdata:/data
     image: redis:8.10.1-alpine
     container_name: redis_counsy
+    ports:
+      - 127.0.0.1:6379:6379
     expose:
       - 6379
     command: redis-server --appendonly yes
@@ -77,6 +79,13 @@ services:
       redis:
         condition: service_healthy
 
+  embedder:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-latest
+    container_name: embedder_counsy
+    command: --model-id intfloat/multilingual-e5-large
+    volumes:
+      - tei_data:/data
+
   test:
     container_name: test_counsy
     <<: *app-common
@@ -93,4 +102,6 @@ volumes:
   pgdata:
     driver: local
   redisdata:
+    driver: local
+  tei_data:
     driver: local
